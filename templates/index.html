@@ -18,6 +18,7 @@
         .estado-LEVE { background: #fff9c4; border-color: #f9a825; }
         .estado-AGUDA { background: #ffe0b2; border-color: #e65100; }
         .estado-CRONICA { background: #ffebee; border-color: #b71c1c; }
+        .estado-TERMINAL { background: #ffcdd2; border-color: #b71c1c; }        
         .estado-label { font-size: 1.2em; font-weight: bold; }
         .estado-interpretacion { margin-top: 6px; font-size: 0.95em; }
         .error { margin-top: 20px; padding: 15px; background: #ffebee; border: 1px solid #ef9a9a; border-radius: 4px; }
@@ -61,9 +62,11 @@
         {% elif resultado == "ENFERMEDAD LEVE" %}
             <div class="resultado estado-LEVE">
         {% elif resultado == "ENFERMEDAD AGUDA" %}
-            <div class="resultado estado-AGUDA">
-        {% else %}
+            <div class="resultado estado-AGUDA">   
+        {% elif "CRONICA" in resultado or "CRÓNICA" in resultado %}
             <div class="resultado estado-CRONICA">
+        {% else %}
+            <div class="resultado estado-TERMINAL">
         {% endif %}
             <div class="estado-label">{{ resultado }}</div>
             <div class="estado-interpretacion">{{ interpretacion }}</div>
