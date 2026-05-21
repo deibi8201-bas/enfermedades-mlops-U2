@@ -6,7 +6,8 @@ INTERPRETACIONES = {
     "NO ENFERMO": "Sin crisis drepanocítica activa. Control ambulatorio de rutina.",
     "ENFERMEDAD LEVE": "Crisis leve. Manejo ambulatorio con analgesia e hidratación oral.",
     "ENFERMEDAD AGUDA": "Crisis moderada. Observación hospitalaria, analgesia IV e hidratación.",
-    "ENFERMEDAD CRÓNICA": "Crisis grave / Síndrome Torácico Agudo. Hospitalización urgente.",
+    "ENFERMEDAD CRONICA": "Crisis grave / Síndrome Torácico Agudo. Hospitalización urgente.",
+    "ENFERMEDAD TERMINAL": "Crisis muy grave. Evaluación en unidad de cuidados intensivos."
 }
 
 
@@ -29,18 +30,22 @@ def predecir_crisis(spo2: float, dolor: int, hemoglobina: float,
     - NO ENFERMO              → sin crisis activa
     - ENFERMEDAD LEVE         → crisis leve, manejo ambulatorio
     - ENFERMEDAD AGUDA        → crisis moderada, observación hospitalaria
-    - ENFERMEDAD CRÓNICA      → crisis grave / síndrome torácico agudo
+    - ENFERMEDAD CRONICA      → crisis grave / síndrome torácico agudo
+    - ENFERMEDAD TERMINAL     → crisis muy grave, evaluación en unidad de cuidados intensivos               
     """
     # Crisis grave o síndrome torácico agudo
-    if spo2 < 90 or frecuencia_respiratoria > 30 or hemoglobina < 5:
-        return "ENFERMEDAD CRÓNICA"
+    if spo2 < 85 and dolor >= 9 and hemoglobina < 5 and fiebre >= 39.5 and frecuencia_respiratoria > 40:
+        return "ENFERMEDAD TERMINAL"    
+    elif spo2 < 90 and frecuencia_respiratoria > 30 and hemoglobina < 5:
+        return "ENFERMEDAD CRONICA"
     # Crisis moderada
-    if spo2 < 94 or dolor >= 8 or hemoglobina < 7:
+    elif spo2 < 94 and dolor >= 8 and hemoglobina < 7:
         return "ENFERMEDAD AGUDA"
     # Crisis leve
-    if dolor >= 4 or fiebre >= 38.5 or crisis_previas_6m >= 3:
+    elif dolor >= 4 and fiebre >= 38.5 and crisis_previas_6m >= 3:
         return "ENFERMEDAD LEVE"
-    return "NO ENFERMO"
+    else:
+        return "NO ENFERMO"
 
 
 @app.route("/", methods=["GET"])
