@@ -1,0 +1,48 @@
+name: CI - validación de Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main  
+
+jobs:
+  pr_pipeline:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write  # Permiso obligatorio para que el Bot comente en el PR
+
+    steps:
+      # 1. Descargar el código del repositorio
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      # 2. Comentar al inicio del Pipeline
+      - name: Comentar inicio en el PR
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: "CI/CD en acción. Ejecutando tareas …"
+
+      # 3. Configurar el entorno de Python
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 4. Instalar dependencias necesarias para las pruebas
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      # 5. Ejecutar las pruebas unitarias básicas
+      - name: Ejecutar pruebas unitarias
+        run: |
+          pytest test_app.py
+
+      # 6. Comentar al finalizar con éxito
+      - name: Comentar éxito en el PR
+        if: success()
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: "CI/CD terminado con éxito."
