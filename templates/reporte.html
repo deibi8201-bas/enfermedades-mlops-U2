@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte Estadístico de Predicciones</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #b71c1c;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            font-size: 1.1em;
+            font-weight: normal;
+            color: #555;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+
+        .meta-info {
+            background: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            border-left: 5px solid #b71c1c;
+        }
+
+        .meta-info p {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        /* Grid de Tarjetas */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 35px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid;
+        }
+
+        .card-val {
+            font-size: 2em;
+            font-weight: bold;
+            color: #222;
+            margin-top: 5px;
+        }
+
+        /* Colores de las Tarjetas */
+        .c-total {
+            border-top-color: #757575;
+            background: #fafafa;
+        }
+
+        .c-no {
+            border-top-color: #388e3c;
+        }
+
+        .c-leve {
+            border-top-color: #f9a825;
+        }
+
+        .c-aguda {
+            border-top-color: #e65100;
+        }
+
+        .c-cronica {
+            border-top-color: #d32f2f;
+        }
+
+        .c-terminal {
+            border-top-color: #b71c1c;
+        }
+
+        /* Tabla de Historial */
+        h3 {
+            color: #333;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #b71c1c;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Badges de estado en la tabla */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85em;
+            display: inline-block;
+        }
+
+        .b-no {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .b-leve {
+            background: #fff9c4;
+            color: #f57f17;
+        }
+
+        .b-aguda {
+            background: #ffe0b2;
+            color: #e65100;
+        }
+
+        .b-cronica {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .b-terminal {
+            background: #ffcdd2;
+            color: #b71c1c;
+        }
+
+        .btn-volver {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #b71c1c;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .btn-volver:hover {
+            background: #7f0000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Panel Clínico de Predicciones</h1>
+    <h2>Estadísticas acumuladas y auditoría de decisiones médicas</h2>
+
+    <div class="meta-info">
+        <p><strong>Fecha de la última evaluación registrada:</strong> {{ datos.fecha_ultima_prediccion }}</p>
+        <p><strong>Total de análisis procesados por el contenedor:</strong> {{ datos.gran_total_predicciones }}</p>
+    </div>
+
+    <h3>Distribución por Categorías</h3>
+    <div class="grid-cards">
+        <div class="card c-total">
+            <div style="color: #666; font-size: 0.9em;">Gran Total</div>
+            <div class="card-val">{{ datos.gran_total_predicciones }}</div>
+        </div>
+        <div class="card c-no">
+            <div style="color: #388e3c; font-size: 0.9em;">No Enfermo</div>
+            <div class="card-val">{{ datos.total_predicciones_por_categoria['NO ENFERMO'] }}</div>
+        </div>
+        <div class="card c-leve">
+            <div style="color: #f57f17; font-size: 0.9em;">Manejo Leve</div>
+            <div class="card-val">{{ datos.total_predicciones_por_categoria['ENFERMEDAD LEVE'] }}</div>
+        </div>
+        <div class="card c-aguda">
+            <div style="color: #e65100; font-size: 0.9em;">Fase Aguda</div>
+            <div class="card-val">{{ datos.total_predicciones_por_categoria['ENFERMEDAD AGUDA'] }}</div>
+        </div>
+        <div class="card c-cronica">
+            <div style="color: #c62828; font-size: 0.9em;">Fase Crónica</div>
+            <div class="card-val">{{ datos.total_predicciones_por_categoria['ENFERMEDAD CRÓNICA'] }}</div>
+        </div>
+        <div class="card c-terminal">
+            <div style="color: #b71c1c; font-size: 0.9em;">Fase Terminal</div>
+            <div class="card-val">{{ datos.total_predicciones_por_categoria['ENFERMEDAD TERMINAL'] }}</div>
+        </div>
+    </div>
+
+    <h3>Monitoreo de las Últimas 5 Predicciones Realizadas</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha / Hora del Registro</th>
+                <th>Clasificación de la Crisis</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fila in datos.ultimas_5_predicciones %}
+            <tr>
+                <td><strong>{{ fila.fecha }}</strong></td>
+                <td>
+                    {% if fila.categoria == "NO ENFERMO" %}
+                    <span class="badge b-no">NO ENFERMO</span>
+                    {% elif fila.categoria == "ENFERMEDAD LEVE" %}
+                    <span class="badge b-leve">ENFERMEDAD LEVE</span>
+                    {% elif fila.categoria == "ENFERMEDAD AGUDA" %}
+                    <span class="badge b-aguda">ENFERMEDAD AGUDA</span>
+                    {% elif fila.categoria == "ENFERMEDAD CRÓNICA" %}
+                    <span class="badge b-cronica">ENFERMEDAD CRÓNICA</span>
+                    {% else %}
+                    <span class="badge b-terminal">ENFERMEDAD TERMINAL</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2" style="text-align: center; color: #777;">No se registran transacciones de datos en el
+                    historial clínico aún.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="/" class="btn-volver">← Volver al Formulario</a>
+
+</body>
+
+</html>

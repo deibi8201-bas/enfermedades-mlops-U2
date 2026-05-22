@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - datos_clinicos:/app/data
+
+volumes:
+  datos_clinicos:
