@@ -16,6 +16,7 @@ La función no representa un modelo clínico validado. Solo simula el comportami
 | `ENFERMEDAD LEVE` | Crisis leve. Manejo ambulatorio con analgesia e hidratación oral. |
 | `ENFERMEDAD AGUDA` | Crisis moderada. Observación hospitalaria, analgesia IV e hidratación. |
 | `ENFERMEDAD CRÓNICA` | Crisis grave / Síndrome Torácico Agudo. Hospitalización urgente. |
+| `ENFERMEDAD TERMINAL` | Crisis muy grave. Evaluación inmediata en unidad de cuidados intensivos. |
 
 ## Variables de entrada
 
@@ -30,10 +31,11 @@ La función no representa un modelo clínico validado. Solo simula el comportami
 
 ## Reglas simuladas de predicción
 
-- `SpO₂ < 90` **o** `FR > 30` **o** `Hb < 5` → `ENFERMEDAD CRÓNICA` (crisis grave / STA)
-- `SpO₂ < 94` **o** `dolor ≥ 8` **o** `Hb < 7` → `ENFERMEDAD AGUDA` (crisis moderada)
-- `dolor ≥ 4` **o** `fiebre ≥ 38.5` **o** `crisis_previas ≥ 3` → `ENFERMEDAD LEVE` (crisis leve)
-- Ninguna de las anteriores → `NO ENFERMO`
+1. **`ENFERMEDAD TERMINAL`**: `SpO₂ < 85` **y** `dolor ≥ 9` **y** `Hb < 5` **y** `fiebre ≥ 39.5` **y** `FR > 40`
+2. **`ENFERMEDAD CRÓNICA`**: `SpO₂ < 90` **y** `FR > 30` **y** `Hb < 5`
+3. **`ENFERMEDAD AGUDA`**: `SpO₂ < 94` **y** `dolor ≥ 8` **y** `Hb < 7`
+4. **`ENFERMEDAD LEVE`**: `dolor ≥ 4` **y** `fiebre ≥ 38.5` **y** `crisis_previas_6m ≥ 3`
+5. **`NO ENFERMO`**: Ninguna de las condiciones anteriores se cumple.
 
 ## Estructura del proyecto
 
@@ -41,24 +43,22 @@ La función no representa un modelo clínico validado. Solo simula el comportami
 mlops_enfermedades_app/
 ├── app.py
 ├── Dockerfile
+├── docker-compose.yml
 ├── requirements.txt
 ├── README.md
 └── templates/
-    └── index.html
+    ├── index.html
+    └── reporte.html
 ```
 
-## Cómo construir la imagen Docker
+## Despliegue y Automatización con Docker Compose
+
+El proyecto utiliza Docker Compose para automatizar el ciclo de vida del contenedor, configurar el almacenamiento persistente nativo y sincronizar de manera automática el huso horario de Colombia (America/Bogota).
 
 Desde la carpeta del proyecto, ejecutar:
 
 ```bash
-docker build -t mlops-enfermedades .
-```
-
-## Cómo correr el contenedor
-
-```bash
-docker run -p 5000:5000 mlops-enfermedades
+docker compose up -d --build
 ```
 
 Después de ejecutar el comando, abrir en el navegador:
@@ -80,40 +80,13 @@ En la página web se ingresan los valores clínicos del paciente:
 
 Luego se presiona el botón `Evaluar` y el sistema muestra el estado y la interpretación clínica.
 
-## Cómo obtener respuestas desde API
-
-También se puede consultar el servicio con una petición POST al endpoint:
+## Cómo consultar las estadisticas 
 
 ```text
-http://localhost:5000/predecir
+http://localhost:5000/estadisticas
 ```
 
-Ejemplo con curl:
-
-```bash
-curl -X POST http://localhost:5000/predecir \
-  -H "Content-Type: application/json" \
-  -d '{"spo2":92,"dolor":7,"hemoglobina":6.5,"fiebre":38.8,"frecuencia_respiratoria":24,"crisis_previas_6m":2}'
-```
-
-Respuesta esperada:
-
-```json
-{
-  "entrada": {
-    "spo2": 92.0,
-    "dolor": 7,
-    "hemoglobina": 6.5,
-    "fiebre": 38.8,
-    "frecuencia_respiratoria": 24,
-    "crisis_previas_6m": 2
-  },
-  "resultado": "ENFERMEDAD AGUDA",
-  "interpretacion_clinica": "Crisis moderada. Observación hospitalaria, analgesia IV e hidratación."
-}
-```
-
-## Ejemplos para probar los cuatro estados
+## Ejemplos para probar los cinco estados
 
 ### NO ENFERMO — sin crisis activa
 
@@ -138,6 +111,11 @@ Respuesta esperada:
 ```json
 {"spo2":87,"dolor":9,"hemoglobina":4.5,"fiebre":39.2,"frecuencia_respiratoria":34,"crisis_previas_6m":5}
 ```
+### ENFERMEDAD TERMINAL — crisis grave / síndrome torácico agudo
+
+```json
+{"spo2":84,"dolor":10,"hemoglobina":3,"fiebre":41,"frecuencia_respiratoria":45,"crisis_previas_6m":5}
+```
 
 ## Nota ética y clínica
 
@@ -149,32 +127,6 @@ Esta solución es únicamente académica. En un escenario real se requeriría va
   },
   "resultado": "ENFERMEDAD LEVE"
 }
-```
-
-## Ejemplos para probar todos los estados
-
-### NO ENFERMO
-
-```json
-{"fiebre":36.5,"dolor":1,"duracion_dias":1,"perdida_peso":false}
-```
-
-### ENFERMEDAD LEVE
-
-```json
-{"fiebre":38.0,"dolor":4,"duracion_dias":3,"perdida_peso":false}
-```
-
-### ENFERMEDAD AGUDA
-
-```json
-{"fiebre":39.2,"dolor":8,"duracion_dias":2,"perdida_peso":false}
-```
-
-### ENFERMEDAD CRÓNICA
-
-```json
-{"fiebre":37.0,"dolor":3,"duracion_dias":35,"perdida_peso":true}
 ```
 
 ## Nota ética y clínica
