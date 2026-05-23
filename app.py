@@ -42,13 +42,13 @@ def guardar_prediccion(resultado):
 def predecir_crisis(spo2: float, dolor: int, hemoglobina: float,
                     fiebre: float, frecuencia_respiratoria: int,
                     crisis_previas_6m: int = 0) -> str:
-    if spo2 < 85 and dolor >= 9 and hemoglobina < 5 and fiebre >= 39.5 and frecuencia_respiratoria > 40:
+    if spo2 <= 80 and dolor >= 9 and hemoglobina <= 4 and fiebre >= 40 and frecuencia_respiratoria >= 40 and crisis_previas_6m >= 4:
         return "ENFERMEDAD TERMINAL"    
-    elif spo2 < 90 and frecuencia_respiratoria > 30 and hemoglobina < 5:
+    elif spo2 <= 88 and dolor >= 7 and hemoglobina <= 6 and fiebre >= 39 and frecuencia_respiratoria >= 30 and crisis_previas_6m >= 3:
         return "ENFERMEDAD CRÓNICA"
-    elif spo2 < 94 and dolor >= 8 and hemoglobina < 7:
+    elif spo2 <= 92 and dolor >= 5 and hemoglobina <= 8 and fiebre >= 38 and frecuencia_respiratoria > 20 and crisis_previas_6m >= 2:
         return "ENFERMEDAD AGUDA"
-    elif dolor >= 4 and fiebre >= 38.5 and crisis_previas_6m >= 3:
+    elif spo2 <= 96 and dolor >= 3 and hemoglobina <= 10 and fiebre >= 37 and frecuencia_respiratoria > 15 and crisis_previas_6m >= 1:
         return "ENFERMEDAD LEVE"
     else:
         return "NO ENFERMO"

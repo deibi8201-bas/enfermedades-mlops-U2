@@ -24,11 +24,11 @@ def test_estadisticas_iniciales_vacias():
 @pytest.mark.parametrize(
     "spo2, dolor, hemoglobina, fiebre, frecuencia_respiratoria, crisis_previas_6m, categoria_esperada",
     [
-        (98, 1, 9.0, 36.5, 16, 0, "NO ENFERMO"),
-        (96, 5, 8.0, 37.0, 18, 1, "ENFERMEDAD LEVE"),
-        (92, 8, 7.5, 38.0, 22, 2, "ENFERMEDAD AGUDA"),
-        (88, 7, 6.0, 38.5, 32, 1, "ENFERMEDAD CRÓNICA"),
-        (80, 10, 4.0, 40.0, 45, 0, "ENFERMEDAD TERMINAL")
+        (98, 1, 11.0, 36.0, 12, 0, "NO ENFERMO"),
+        (96, 4, 8.0, 37.0, 18, 1, "ENFERMEDAD LEVE"),
+        (92, 5, 7.5, 38.0, 22, 2, "ENFERMEDAD AGUDA"),
+        (88, 7, 5.0, 39.0, 32, 3, "ENFERMEDAD CRÓNICA"),
+        (80, 10, 2.0, 40.0, 45, 4, "ENFERMEDAD TERMINAL")
     ]
 )
 def test_obtener_todas_las_categorias(spo2, dolor, hemoglobina, fiebre, frecuencia_respiratoria, crisis_previas_6m, categoria_esperada):
@@ -50,11 +50,11 @@ def test_conteo_exacto_por_categoria_en_reporte():
     
     # Definimos un set con los 5 escenarios clínicos diferentes
     casos_clinicos = [
-        {"spo2": 98, "dolor": 1, "hemoglobina": 9.0, "fiebre": 36.5, "frecuencia_respiratoria": 16, "crisis_previas_6m": 0}, # NO ENFERMO
-        {"spo2": 96, "dolor": 5, "hemoglobina": 8.0, "fiebre": 37.0, "frecuencia_respiratoria": 18, "crisis_previas_6m": 1}, # ENFERMEDAD LEVE
-        {"spo2": 92, "dolor": 8, "hemoglobina": 7.5, "fiebre": 38.0, "frecuencia_respiratoria": 22, "crisis_previas_6m": 2}, # ENFERMEDAD AGUDA
-        {"spo2": 88, "dolor": 7, "hemoglobina": 6.0, "fiebre": 38.5, "frecuencia_respiratoria": 32, "crisis_previas_6m": 1}, # ENFERMEDAD CRÓNICA
-        {"spo2": 80, "dolor": 10, "hemoglobina": 4.0, "fiebre": 40.0, "frecuencia_respiratoria": 45, "crisis_previas_6m": 0} # ENFERMEDAD TERMINAL
+        {"spo2": 98, "dolor": 1, "hemoglobina": 11.0, "fiebre": 36.0, "frecuencia_respiratoria": 12, "crisis_previas_6m": 0}, # NO ENFERMO
+        {"spo2": 96, "dolor": 4, "hemoglobina": 8.0, "fiebre": 37.0, "frecuencia_respiratoria": 18, "crisis_previas_6m": 1}, # ENFERMEDAD LEVE
+        {"spo2": 92, "dolor": 5, "hemoglobina": 7.5, "fiebre": 38.0, "frecuencia_respiratoria": 22, "crisis_previas_6m": 2}, # ENFERMEDAD AGUDA
+        {"spo2": 88, "dolor": 7, "hemoglobina": 5.0, "fiebre": 39.0, "frecuencia_respiratoria": 32, "crisis_previas_6m": 3}, # ENFERMEDAD CRÓNICA
+        {"spo2": 80, "dolor": 10, "hemoglobina": 2.0, "fiebre": 40.0, "frecuencia_respiratoria": 45, "crisis_previas_6m": 4} # ENFERMEDAD TERMINAL
     ]
     
     # 1. Ejecutar las 5 peticiones de forma consecutiva
